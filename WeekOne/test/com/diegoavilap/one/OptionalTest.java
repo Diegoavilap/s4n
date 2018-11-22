@@ -14,7 +14,7 @@ public class OptionalTest {
 	
 	// **Empty()**
 	@Test
-	void whenCreatesEmptyOptional_thenCorrect() {
+	public void whenCreatesEmptyOptional_thenCorrect() {
 		//Creando un Optional vacio
 	    Optional<String> empty = Optional.empty();
 	    // isPresent() valida si hay algun valor en un Optional
@@ -23,13 +23,13 @@ public class OptionalTest {
 	
 	// **of()**
 	@Test
-	void givenNonNull_whenCreatesNonNullable_thenCorrect() {
+	public void givenNonNull_whenCreatesNonNullable_thenCorrect() {
 	    String name = "baeldung";
 	    Optional.of(name);
 	}
 	
 	@Test
-	void givenNonNull_whenCreatesOptional_thenCorrect() {
+	public void givenNonNull_whenCreatesOptional_thenCorrect() {
 	    String name = "s4n";
 	    //Creando un Optional con el metodo estatico of
 	    Optional<String> opt = Optional.of(name);
@@ -37,10 +37,10 @@ public class OptionalTest {
 	}
 		
 	@Test
-	void givenNull_whenThrowsErrorOnCreate_thenCorrect() {
+	public void givenNull_whenThrowsErrorOnCreate_thenCorrect() {
 	    String name = null;
 	    // Creando un Optional con el metodo estatico of
-	    // que ironicamente retorna un NullPointerException
+	    // que retorna un NullPointerException
 	    // si se pasa como argumento un null
 		assertThrows(NullPointerException.class, () -> {
 	    	Optional<String> opt = Optional.of(name);
@@ -50,7 +50,7 @@ public class OptionalTest {
 	
 	// **ofNullable()**
 	@Test
-	void givenNonNull_whenCreatesNullable_thenCorrect() {
+	public void givenNonNull_whenCreatesNullable_thenCorrect() {
 	    String name = "s4n";
 	    //Si se espera un valor null como argumento para crear el Optional
 	    //se debe utilizar el metodo ofNullable()
@@ -60,7 +60,7 @@ public class OptionalTest {
 	}
 	
 	@Test
-	void givenNull_whenCreatesNullable_thenCorrect() {
+	public void givenNull_whenCreatesNullable_thenCorrect() {
 	    String name = null;
 	    //Si se pasa como parametro un null se evita el NullPointerException
 	    //A cambio se obitene un Optional vacio
@@ -72,13 +72,13 @@ public class OptionalTest {
 	// El metodo isPresent() sirve para validar si el Optional tiene un valor o no
 	// retorna true solo si el valor no es null
 	@Test
-	void givenOptionalNonNull_whenIsPresentWorks_thenCorrect() {
+	public void givenOptionalNonNull_whenIsPresentWorks_thenCorrect() {
 	    Optional<String> opt = Optional.of("s4n");
 	    assertTrue(opt.isPresent());
 	}
 	
 	@Test
-	void givenOptionalNull_whenIsPresentWorks_thenCorrect() {
+	public void givenOptionalNull_whenIsPresentWorks_thenCorrect() {
 	    Optional<String> opt =  Optional.ofNullable(null);
 	    assertFalse(opt.isPresent());
 	}
@@ -87,7 +87,7 @@ public class OptionalTest {
 	// El memtodo ifPresent() valida si el Optional no es null y ejecuta el codigo
 	// pasado como argumento
 	@Test
-	void givenOptionalNonNull_whenIfPresentWorks_thenCorrect() {
+	public void givenOptionalNonNull_whenIfPresentWorks_thenCorrect() {
 	    Optional<String> opt = Optional.of("s4n");
 	    opt.ifPresent(name -> System.out.println(name.length()));
 	}
@@ -95,7 +95,7 @@ public class OptionalTest {
 	// Si el valor existe y se pasa null como argumento, 
 	// ifPresent() lanza un NullPointerException
 	@Test
-	void givenOptionalNull_whenIfPresentWorks_thenCorrect() {
+	public void givenOptionalNull_whenIfPresentWorks_thenCorrect() {
 	    Optional<String> opt = Optional.of("s4n");
 	    assertThrows(NullPointerException.class, () -> {
 	    	opt.ifPresent(null);
@@ -106,7 +106,7 @@ public class OptionalTest {
 	// Si el Optional tiene algun valor el metodo orElse() retorna ese valor
 	// de lo contrario retorna el valor pasado como argumento 
 	@Test
-	void whenOrElseWorks_thenCorrect() {
+	public void whenOrElseWorks_thenCorrect() {
 	    String nullName = null;
 	    String name = Optional.ofNullable(nullName).orElse("s4n");
 	    assertEquals("s4n", name);
@@ -116,7 +116,7 @@ public class OptionalTest {
 	//Si el Otional tiene algun valor el metodo orElseGet() retorna ese valor
 	// de lo contrario devuelve el valor del retorno del closure "Suplier"
 	@Test
-	void whenOrElseGetWorks_thenCorrect() {
+	public void whenOrElseGetWorks_thenCorrect() {
 	    String nullName = null;
 	    String name = Optional.ofNullable(nullName).orElseGet(() -> "s4n");
 	    assertEquals("s4n", name);
@@ -130,7 +130,7 @@ public class OptionalTest {
 	}
 	
 	@Test
-	void whenOrElseGetAndOrElseOverlap_thenCorrect() {
+	public void whenOrElseGetAndOrElseOverlap_thenCorrect() {
 	    String text = null;
 	 
 	    System.out.println("Using orElseGet:");
@@ -146,7 +146,7 @@ public class OptionalTest {
 	// La diferencia es que cuando el value existe, el metodo orElseGet()  
 	// previene la creacion del objeto que se encuentra como default 
 	@Test
-	void whenOrElseGetAndOrElseDiffer_thenCorrect() {
+	public void whenOrElseGetAndOrElseDiffer_thenCorrect() {
 	    String text = "Text present";
 	 
 	    System.out.println("Using orElseGet:");
@@ -164,7 +164,7 @@ public class OptionalTest {
 	// si se le pasa null como parametro, lanza una excepcion del tipo
 	// NullPointerException
 	@Test
-	void whenOrElseThrowWorks_thenCorrect() {
+	public void whenOrElseThrowWorks_thenCorrect() {
 	    String nullName = null;
 	    assertThrows(IllegalArgumentException.class, () -> {
 	    	String name = Optional.ofNullable(nullName).orElseThrow(IllegalArgumentException::new);
@@ -174,7 +174,7 @@ public class OptionalTest {
 	// **get()**
 	// Retorna el valor del Optional
 	@Test
-	void givenOptional_whenGetsValue_thenCorrect() {
+	public void givenOptional_whenGetsValue_thenCorrect() {
 	    Optional<String> opt = Optional.of("s4n");
 	    String name = opt.get();
 	 
@@ -183,7 +183,7 @@ public class OptionalTest {
 	
 	//Si el valor es null lanza una excepcion del tipo NoSuchElementException
 	@Test
-	void givenOptionalWithNull_whenGetThrowsException_thenCorrect() {
+	public void givenOptionalWithNull_whenGetThrowsException_thenCorrect() {
 	    Optional<String> opt = Optional.ofNullable(null);
 	    assertThrows(NoSuchElementException.class, () -> {
 	    	String name = opt.get();
@@ -194,7 +194,7 @@ public class OptionalTest {
 	// Si el predicado pasado como parametro se cumple, retorna el Optional con su value
 	// Si no se cumple el predicado retorna un Optinal vacio
 	@Test
-	void whenOptionalFilterWorks_thenCorrect() {
+	public void whenOptionalFilterWorks_thenCorrect() {
 	    Integer year = 2016;
 	    Optional<Integer> yearOptional = Optional.of(year);
 	    boolean is2016 = yearOptional.filter(y -> y == 2016).isPresent();
@@ -209,17 +209,14 @@ public class OptionalTest {
 	public boolean priceIsInRange1(Modem modem) {
 	    boolean isInRange = false;
 	 
-	    if (modem != null && modem.getPrice() != null
-	      && (modem.getPrice() >= 10
-	        && modem.getPrice() <= 15)) {
-	 
+	    if (modem != null && modem.getPrice() != null && (modem.getPrice() >= 10 && modem.getPrice() <= 15)) {
 	        isInRange = true;
 	    }
 	    return isInRange;
 	}
 	
 	@Test
-	void whenFiltersWithoutOptional_thenCorrect() {
+	public void whenFiltersWithoutOptional_thenCorrect() {
 	    assertTrue(priceIsInRange1(new Modem(10.0)));
 	    assertFalse(priceIsInRange1(new Modem(9.9)));
 	    assertFalse(priceIsInRange1(new Modem(null)));
@@ -241,7 +238,7 @@ public class OptionalTest {
 	 }
 	
 	@Test
-	void whenFiltersWithOptional_thenCorrect() {
+	public void whenFiltersWithOptional_thenCorrect() {
 	    assertTrue(priceIsInRange2(new Modem(10.0)));
 	    assertFalse(priceIsInRange2(new Modem(9.9)));
 	    assertFalse(priceIsInRange2(new Modem(null)));
@@ -255,7 +252,7 @@ public class OptionalTest {
 	// de lo contrario retorna un optional vacio
 	
 	@Test
-	void givenOptional_whenMapWorks_thenCorrect() {
+	public void givenOptional_whenMapWorks_thenCorrect() {
 	    List<String> companyNames = Arrays.asList("paypal", "oracle", "", "microsoft", "", "apple");
 	    Optional<List<String>> listOptional = Optional.of(companyNames);
 	 
@@ -266,7 +263,7 @@ public class OptionalTest {
 	}
 	
 	@Test
-	void givenOptional_whenMapWorksWithFilter_thenCorrect() {
+	public void givenOptional_whenMapWorksWithFilter_thenCorrect() {
 	    String password = " password ";
 	    Optional<String> passOpt = Optional.of(password);
 	    boolean correctPassword = passOpt.filter(
@@ -276,7 +273,6 @@ public class OptionalTest {
 	    correctPassword = passOpt
 	    // map() es utlizado para limpiar la contraseña de espacios al pricipio
 	    // y al final utilizando String::trim
-	    		//  ¡¡Pregunta!!
 	      .map(String::trim)
 	      .filter(pass -> pass.equals("password"))
 	      .isPresent();
@@ -286,7 +282,7 @@ public class OptionalTest {
 	// El metodo flaMap() es similar al metodo Map() pero solo acepta como parametro
 	// una funcion que retorna un objeto envuelto como Optional
 	@Test
-	void givenOptional_whenFlatMapWorks_thenCorrect2() {
+	public void givenOptional_whenFlatMapWorks_thenCorrect2() {
 	    Person person = new Person("john", 26);
 	    Optional<Person> personOptional = Optional.of(person);
 	    
@@ -309,7 +305,7 @@ public class OptionalTest {
 	}
 	
 	@Test
-    void givenOptional_whenFlatMapWorksWithFilter_thenCorrect() {
+	public void givenOptional_whenFlatMapWorksWithFilter_thenCorrect() {
         Person person = new Person("john", 26);
         person.setPassword("password");
         Optional<Person> personOptional = Optional.of(person);
@@ -324,7 +320,7 @@ public class OptionalTest {
 	// Retorna true si ambas instancias de Optional estan vacias o 
 	// si tienen el mismo value de lo contrario retorna false
 	@Test
-	void givenOptionalNull_whenEqualsWorks_thenCorrect() {
+	public void givenOptionalNull_whenEqualsWorks_thenCorrect() {
 		String value = null;
 		Optional<String> optional1 = Optional.ofNullable(value);
 		Optional<String> optional2 = Optional.ofNullable(value);
@@ -332,7 +328,7 @@ public class OptionalTest {
 	}
 	
 	@Test 
-	void givenOptionalNoNull_whenEqualsWorks_thenCorrect() {
+	public void givenOptionalNoNull_whenEqualsWorks_thenCorrect() {
 		String value = "s4n";
 		String value2 = "s4n";
 		Optional<String> optional1 = Optional.ofNullable(value);
