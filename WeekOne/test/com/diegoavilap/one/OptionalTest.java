@@ -24,7 +24,7 @@ public class OptionalTest {
 	// **of()**
 	@Test
 	public void givenNonNull_whenCreatesNonNullable_thenCorrect() {
-	    String name = "baeldung";
+	    String name = "s4n";
 	    Optional.of(name);
 	}
 	

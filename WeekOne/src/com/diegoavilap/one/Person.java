@@ -1,10 +1,12 @@
 package com.diegoavilap.one;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class Person {
-	private String name;
-    private int age;
+	public String name;
+    public int age;
     private String password;
  
     
@@ -26,6 +28,10 @@ public class Person {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public String toString(){
+		return name;
+	}
 
 
 	public Optional<String> getName() {
@@ -39,4 +45,14 @@ public class Person {
     public Optional<String> getPassword() {
         return Optional.ofNullable(password);
     }
+    
+    static List<Person> persons() {
+    	   return Arrays.asList(
+    	        new Person("Max", 18),
+    	        new Person("Peter", 23),
+    	        new Person("Pamela", 23),
+    	        new Person("David", 12));
+    
+    }
+    
 }
