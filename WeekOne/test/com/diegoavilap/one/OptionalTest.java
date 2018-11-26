@@ -253,7 +253,7 @@ public class OptionalTest {
 	
 	@Test
 	public void givenOptional_whenMapWorks_thenCorrect() {
-	    List<String> companyNames = Arrays.asList("paypal", "oracle", "", "microsoft", "", "apple");
+	    List<String> companyNames = Arrays.asList("paypal", "oracle", "", "microsoft", "arr", "apple");
 	    Optional<List<String>> listOptional = Optional.of(companyNames);
 	 
 	    int size = listOptional
