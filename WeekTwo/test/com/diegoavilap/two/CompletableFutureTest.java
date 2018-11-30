@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,18 @@ public class CompletableFutureTest {
     @BeforeEach
     public void setUp() {
         executor = Executors.newFixedThreadPool(5);
+        //Executor --> methods for creation of pre-configured thread pool instances for you.
+        //corePoolSize 
+        //maximumPoolSize 
+        //keepAliveTime
+        
+        //newFixedThreadPool(#) --> #,#, 0
+        //newCachedThreadPool() --> 0,Integer.MAX_VALUE (2 147 483 647),60
+        //ScheduledThreadPoolExecutor(#) --> #,unbounded, 0
+        
+        //ForkJoinPool --> does not create a new thread for each task or subtask
+        //implementing the Work Stealing algorithm instead. 
+        //Simply put – free threads try to “steal” work from deques of busy threads.
     }
     
     @AfterEach
@@ -54,21 +69,26 @@ public class CompletableFutureTest {
     	assertEquals("S4N", future.get());
     }
     
-    //runAsync()
+    //runAsync() **
     //Recibe un Runnable como parametro
     @Disabled
     @Test
     public void whenRunAsyncIsCalled_thenTheFutureIsDone() throws InterruptedException, ExecutionException {
     	
     	CompletableFuture<Void> futureRunAsync = CompletableFuture.runAsync(() -> {
-    	    LOGGER.info("Comenzando runAsync...");
-    	    LOGGER.info("Terminado runAsync!");
+    	    LOGGER.info("Executor Comenzando runAsync...");
+    	    LOGGER.info("Executor Terminado runAsync!");
     	}, executor);
-    	 
+    	
+    	    	
+    	CompletableFuture<Void> futureRunAsync2 = CompletableFuture.runAsync(() -> {
+    	    LOGGER.info("ForkJoinPool Comenzando runAsync...");
+    	    LOGGER.info("ForkJoinPool Terminado runAsync!");
+    	});
     	Sleep.sleepSeconds(2);
     	assertTrue(futureRunAsync.isDone());
     }
-    //supplyAsync()
+    //supplyAsync() **
     @Disabled
     @Test
     public void whenSupplyAsyncIsCalled_thenTheCompletableFuture() throws InterruptedException, ExecutionException {
@@ -80,8 +100,7 @@ public class CompletableFutureTest {
     }
     
     
-    //whenCompleteAsync() ---> Callback
-    @Disabled
+    //whenCompleteAsync() ---> Callback ***
     @Test
     public void whenCompleteAsyncIsCalled_thenIsCorrected() throws InterruptedException, ExecutionException {
     	CompletableFuture<String> futureSupplyAsync = CompletableFuture.supplyAsync(() -> {
@@ -99,7 +118,7 @@ public class CompletableFutureTest {
     
     // --- Processing Results of Asynchronous Computations --
     
-    //thenApplyAsync --> Map();
+    //thenApplyAsync --> Map(); ***
     @Disabled
     @Test
     public void whenThenApplyAsyncIsCalled_thenCorrect() throws InterruptedException, ExecutionException {
@@ -117,7 +136,7 @@ public class CompletableFutureTest {
     	assertEquals("S4N", futureApply.get());
     }
     
-    //thenAcceptAsync
+    //thenAcceptAsync ***
     @Disabled
     @Test
     public void whenThenAcceptAsyncIsCalled_thenCorrect() throws InterruptedException, ExecutionException {
@@ -139,7 +158,7 @@ public class CompletableFutureTest {
     	assertEquals("S4N", futureAsync.get());
     }
 
-	// thenRun
+	// thenRun ***
     @Disabled
     @Test
     public void whenThenRunAsyncIsCalled_thenIsCorrect() {
@@ -157,12 +176,14 @@ public class CompletableFutureTest {
     }
     
     //Handling Errors
-    @Disabled
+    //exceptionally *
+    //@Disabled
 	@Test
 	public void whenExceptionally_thenIsCorrect() throws InterruptedException, ExecutionException {
 		CompletableFuture<String> futureAsync = CompletableFuture.supplyAsync(() -> {
 		    LOGGER.info("Pasando por supplyAsync...");
 		    throw new RuntimeException("Error en el futuro");
+		    
 		}, executor);
 		 
 		CompletableFuture<String> futureEx = futureAsync.exceptionally(e -> {
@@ -171,12 +192,13 @@ public class CompletableFutureTest {
 		});
 		 
 		futureEx.whenCompleteAsync((s, e) -> LOGGER.info("Resultado futureEx: {}", s), executor);
+		Sleep.sleepSeconds(1);
 		
 		//------------//
 		assertEquals("Mensaje de Error", futureEx.get());
 	}
 	
-    //handledAsync()
+    //handledAsync() ***
     @Disabled
 	@Test
 	public void whenHandledFutuure_thenCorrect() throws InterruptedException, ExecutionException {
@@ -195,7 +217,7 @@ public class CompletableFutureTest {
 		    }
 		}, executor);
 		
-		handledFuture.whenCompleteAsync((s, e) -> LOGGER.info("Resultado handle: {}", s), executor);
+		//handledFuture.whenCompleteAsync((s, e) -> LOGGER.info("Resultado handle: {}", s), executor);
 		assertEquals("Mensaje de Error", handledFuture.get());
 	}
     //whenCompleteAsync() for handling errors
@@ -219,7 +241,7 @@ public class CompletableFutureTest {
 	    }); 
     }
     
-    //thenComposeAsync()
+    //thenComposeAsync() ***
     @Disabled
     @Test
     public void whenThenComposeAsync_thenCorrect() throws InterruptedException, ExecutionException {
@@ -241,7 +263,7 @@ public class CompletableFutureTest {
     	assertEquals("Colaboreme profe no sea así, le doy mil pesos", fCompose.get());
     }
     
-    //thenCombineAsync
+    //thenCombineAsync ***
     @Disabled
     @Test
     public void givenTwoCompletableFuture_whenThenCombineAsync_thenANewCompletableFuture() throws InterruptedException, ExecutionException {
@@ -266,7 +288,7 @@ public class CompletableFutureTest {
     	assertEquals("TerminadoTerminado other", fCombine.get());
     }
     
- // thenAcceptBoth 
+ // thenAcceptBoth ***
     @Disabled
     @Test
     public void whenThenAcceptBothAsnycIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
@@ -288,7 +310,8 @@ public class CompletableFutureTest {
     	assertEquals("Terminado", future1.get());
     }
     
-    @Disabled
+    //AcceptEither ***
+    //@Disabled
     @Test
     public void whenAcceptEitherAsyncIsCalled_thenIsCorrect() {
     	// acceptEither
@@ -309,8 +332,8 @@ public class CompletableFutureTest {
     	        , executor);
     }
     
-    // runAfterEitherAsync()
-    @Disabled
+    // runAfterEitherAsync() ***
+    // @Disabled
     @Test
     public void whenRunAfterEiterAsyncIsCalled_whenIsCorrect() {
     	// runAfterEither
@@ -329,8 +352,8 @@ public class CompletableFutureTest {
     	        , executor);
     }
     
-    //applyToEitherAsync()
-    @Disabled
+    //applyToEitherAsync() ***
+    @Disabled 
     @Test
     public void whenApplyToEitherAsyncIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
     	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
@@ -354,22 +377,30 @@ public class CompletableFutureTest {
     	assertEquals("PRIMERO", applyToEitherFuture.get());
     }
 
-	// allOf()
-    @Disabled
+    
+	// allOf() 
+    //@Disabled
     @Test
     public void givenThreeCompletableFuture_whenAllOfIsCalled_thenIsCorect() throws InterruptedException, ExecutionException {
 
-    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Terminado future1", executor);
-    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "Terminado future2", executor);
-    	CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> "Terminado future3", executor);
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Hello", executor);
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "Beautiful", executor);
+    	CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> "World", executor);
     	 
     	CompletableFuture<Void> all = CompletableFuture.allOf(future1, future2, future3);
-    	all.whenCompleteAsync((s, e) -> LOGGER.info("Resultado all: {}", s), executor);
+    	//all.whenCompleteAsync((s, e) -> LOGGER.info("Resultado all: {}", s), executor);
     	
-    	assertEquals(null, all.get());
+
+    	String combined = Stream.of(future1, future2, future3)
+    			  				.map(CompletableFuture::join)
+    			  				.collect(Collectors.joining(" "));
+    			 
+    	assertEquals("Hello Beautiful World", combined);
+    	//assertEquals(null, all.get());
     }
     
     //anyOf
+    @Disabled
     @Test
     public void givenThreeCompletableuture_whenAnyOfIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
     	// anyOf
@@ -396,6 +427,7 @@ public class CompletableFutureTest {
     	CompletableFuture<Object> all = CompletableFuture.anyOf(future1, future2, future3);
     	
     	all.whenCompleteAsync((s, e) -> LOGGER.info("Resultado any: {}", s), executor);
+    	
     	assertEquals("Terminado future2", all.get());
     }
     
