@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -242,6 +241,8 @@ public class CompletableFutureTest {
     	assertEquals("Colaboreme profe no sea así, le doy mil pesos", fCompose.get());
     }
     
+    //thenCombineAsync
+    @Disabled
     @Test
     public void givenTwoCompletableFuture_whenThenCombineAsync_thenANewCompletableFuture() throws InterruptedException, ExecutionException {
     	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
@@ -265,6 +266,138 @@ public class CompletableFutureTest {
     	assertEquals("TerminadoTerminado other", fCombine.get());
     }
     
+ // thenAcceptBoth 
+    @Disabled
+    @Test
+    public void whenThenAcceptBothAsnycIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
+    	// thenAcceptBoth
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future1 con supplyAsync...");
+    	    return "Terminado";
+    	}, executor);
+    	 
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future2 con supplyAsync...");
+    	    return "Terminado other";
+    	}, executor);
+    	 
+    	future1.thenAcceptBothAsync(future2, (s1, s2) ->
+    	                LOGGER.info("En el thenAcceptBoth, recibidos results: {}, {}", s1, s2)
+    	        , executor);
+    	
+    	assertEquals("Terminado", future1.get());
+    }
+    
+    @Disabled
+    @Test
+    public void whenAcceptEitherAsyncIsCalled_thenIsCorrect() {
+    	// acceptEither
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future1 con supplyAsinc...");
+    	    Sleep.sleepSeconds(3);
+    	    return "Segundo";
+    	}, executor);
+    	 
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future2 con supplyAsync...");
+    	    Sleep.sleepSeconds(1);
+    	    return "Primero";
+    	}, executor);
+    	 
+    	future1.acceptEitherAsync(future2, (s) ->
+    	                LOGGER.info("En el acceptEither, recibido el primer resultado: {}", s)
+    	        , executor);
+    }
+    
+    // runAfterEitherAsync()
+    @Disabled
+    @Test
+    public void whenRunAfterEiterAsyncIsCalled_whenIsCorrect() {
+    	// runAfterEither
+    	CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+    	    LOGGER.info("Creando el future1 con runAsynx()...");
+    	    Sleep.sleepSeconds(3);
+    	}, executor);
+    	 
+    	CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+    	    LOGGER.info("Creando el future2 con runAsync...");
+    	    Sleep.sleepSeconds(1);
+    	    LOGGER.info("Terminado future2 for runAfterEither!");
+    	}, executor);
+    	 
+    	future1.runAfterEitherAsync(future2, () -> LOGGER.info("En el runAfterEither, primero terminado.")
+    	        , executor);
+    }
+    
+    //applyToEitherAsync()
+    @Disabled
+    @Test
+    public void whenApplyToEitherAsyncIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future1 con supplyAsync...");
+    	    Sleep.sleepSeconds(3);
+    	    return "Segundo";
+    	}, executor);
+    	 
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Creando el future2 con supplyAsync...");
+    	    Sleep.sleepSeconds(1);
+    	    return "Primero";
+    	}, executor);
+    	 
+    	CompletableFuture<String> applyToEitherFuture = future1.applyToEitherAsync(future2, s -> {
+    	    LOGGER.info("Comenzando applyToEither...");
+    	    return s.toUpperCase();
+    	}, executor);
+    	 
+    	applyToEitherFuture.whenCompleteAsync((s, e) -> LOGGER.info("Resultado applyToEither: {}", s),executor);
+    	assertEquals("PRIMERO", applyToEitherFuture.get());
+    }
+
+	// allOf()
+    @Disabled
+    @Test
+    public void givenThreeCompletableFuture_whenAllOfIsCalled_thenIsCorect() throws InterruptedException, ExecutionException {
+
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Terminado future1", executor);
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "Terminado future2", executor);
+    	CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> "Terminado future3", executor);
+    	 
+    	CompletableFuture<Void> all = CompletableFuture.allOf(future1, future2, future3);
+    	all.whenCompleteAsync((s, e) -> LOGGER.info("Resultado all: {}", s), executor);
+    	
+    	assertEquals(null, all.get());
+    }
+    
+    //anyOf
+    @Test
+    public void givenThreeCompletableuture_whenAnyOfIsCalled_thenIsCorrect() throws InterruptedException, ExecutionException {
+    	// anyOf
+    	CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Comenzando future1 for allOf...");
+    	    Sleep.sleepSeconds(2);
+    	    LOGGER.info("Terminado future1 for allOf!");
+    	    return "Terminado future1";
+    	}, executor);
+    	 
+    	CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Comenzando future2 for allOf...");
+    	    Sleep.sleepSeconds(1);
+    	    LOGGER.info("Terminado future2 for allOf!");
+    	    return "Terminado future2";
+    	}, executor);
+    	 
+    	CompletableFuture<String> future3 = CompletableFuture.supplyAsync(() -> {
+    	    LOGGER.info("Comenzando future3 for allOf...");
+    	    Sleep.sleepSeconds(3);
+    	    return "Terminado future3";
+    	}, executor);
+    	
+    	CompletableFuture<Object> all = CompletableFuture.anyOf(future1, future2, future3);
+    	
+    	all.whenCompleteAsync((s, e) -> LOGGER.info("Resultado any: {}", s), executor);
+    	assertEquals("Terminado future2", all.get());
+    }
     
     
 }
